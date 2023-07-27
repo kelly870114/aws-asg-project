@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 // @mui
 import {
   Button,
@@ -23,7 +24,6 @@ import { ProductSort, ProductFilterSidebar } from '../sections/@dashboard/produc
 import KudosList from '../sections/@dashboard/kudos/KudosList';
 import avatar from '../assets/images/avatars/avatar_1.jpg';
 
-
 // ----------------------------------------------------------------------
 
 const StyledProductImg = styled('img')({
@@ -37,6 +37,9 @@ const StyledProductImg = styled('img')({
 // ----------------------------------------------------------------------
 
 export default function ProductsPage() {
+  const [members, setMembers] = useState([]);
+  const [allKudos, setKudos] = useState([]);
+  const [selectedMember, setSelectedMember] = useState(null);
   const [openFilter, setOpenFilter] = useState(false);
 
   const handleOpenFilter = () => {
@@ -50,14 +53,42 @@ export default function ProductsPage() {
   const [open, setOpen] = useState(false);
   const [scroll, setScroll] = useState('paper');
 
-  const handleClickOpen = (scrollType) => () => {
+  const handleClickOpen = (scrollType, member) => () => {
     setOpen(true);
     setScroll(scrollType);
+    setSelectedMember(member);
   };
 
   const handleClose = () => {
     setOpen(false);
   };
+
+  const getMembersFromBackend = () => {
+    axios
+      .get('http://127.0.0.1:5000/members')
+      .then((response) => {
+        setMembers(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching members data:', error);
+      });
+  };
+
+  const getKudosFromBackend = () => {
+    axios
+      .get('http://127.0.0.1:5000/kudos')
+      .then((response) => {
+        setKudos(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching kudos data:', error);
+      });
+  };
+
+  useEffect(() => {
+    getMembersFromBackend();
+    getKudosFromBackend();
+  }, []);
 
   return (
     <>
@@ -83,101 +114,96 @@ export default function ProductsPage() {
         </Stack>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <Box sx={{ pt: '100%', position: 'relative' }}>
-                <StyledProductImg src={avatar} />
-              </Box>
-              <Stack spacing={2} sx={{ p: 3 }} alignItems="center">
-                <Link color="inherit" underline="hover">
-                  <Typography variant="subtitle1" noWrap>
-                    Ginny
-                  </Typography>
-                </Link>
+          {/* Member Cards */}
+          {members.map((member) => (
+            <Grid item xs={12} sm={6} md={3} key={member.member_id}>
+              <Card>
+                <Box sx={{ pt: '100%', position: 'relative' }}>
+                  {/* Assuming the 'avatar' field is available in your employee data */}
+                  <StyledProductImg src={avatar} />
+                </Box>
+                <Stack spacing={2} sx={{ p: 3 }} alignItems="center">
+                  <Link color="inherit" underline="hover">
+                    <Typography variant="subtitle1" noWrap>
+                      {member.member_name}
+                    </Typography>
+                  </Link>
 
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <Typography variant="subtitle2">Associate Solutions Architect</Typography>
-                </Stack>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    color: '#ff9900',
-                    borderColor: '#ff9900',
-                    '&:hover': {
-                      color: '#ffffff',
+                  <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Typography variant="subtitle2"> {member.job_title} </Typography>
+                  </Stack>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      color: '#ff9900',
                       borderColor: '#ff9900',
-                      backgroundColor: '#ff9900',
-                    },
-                  }}
-                  onClick={handleClickOpen('paper')}
-                >
-                  Give Kudos
-                </Button>
-                <Dialog open={open} onClose={handleClose} scroll={scroll} >
-                  <DialogTitle>Give Kudos</DialogTitle>
-                  <DialogContent>
-                    <DialogContentText>Give your colleages some kudos 🫶</DialogContentText>
-                    <TextField
-                      id="kudos"
-                      multiline
-                      size="medium"
-                      sx={{
-                        paddingTop: '10px',
-                      }}
-                      fullWidth
-                    />
-                    <KudosList/>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        color: '#232f3e',
-                        borderColor: '#232f3e',
-                        '&:hover': {
-                          color: '#232f3e',
-                          borderColor: '#232f3e',
-                          backgroundColor: '#ffffff',
-                        },
-                      }}
-                      onClick={handleClose}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        color: '#ff9900',
+                      '&:hover': {
+                        color: '#ffffff',
                         borderColor: '#ff9900',
-                        '&:hover': {
-                          color: '#ff9900',
-                          borderColor: '#ff9900',
-                          backgroundColor: '#ffffff',
-                        },
-                      }}
-                      onClick={handleClose}
-                    >
-                      Submit
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-              </Stack>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>Hello</Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>Hello</Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>Hello</Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>Hello</Card>
-          </Grid>
+                        backgroundColor: '#ff9900',
+                      },
+                    }}
+                    onClick={handleClickOpen('paper', member)}
+                  >
+                    Give Kudos
+                  </Button>
+                </Stack>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
+
+        {/* Kudos Dialog */}
+        <Dialog open={open} onClose={handleClose} scroll={scroll}>
+          <DialogTitle>Give Kudos</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Give your colleague some kudos 🫶</DialogContentText>
+            <TextField
+              id="kudos"
+              multiline
+              size="medium"
+              sx={{
+                paddingTop: '10px',
+              }}
+              fullWidth
+            />
+            {selectedMember && (
+              <KudosList kudos={allKudos.filter((kudo) => kudo.to_id === selectedMember.member_id)} />
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="outlined"
+              sx={{
+                color: '#232f3e',
+                borderColor: '#232f3e',
+                '&:hover': {
+                  color: '#232f3e',
+                  borderColor: '#232f3e',
+                  backgroundColor: '#ffffff',
+                },
+              }}
+              onClick={handleClose}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                color: '#ff9900',
+                borderColor: '#ff9900',
+                '&:hover': {
+                  color: '#ff9900',
+                  borderColor: '#ff9900',
+                  backgroundColor: '#ffffff',
+                },
+              }}
+              onClick={handleClose}
+            >
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </>
   );
