@@ -41,6 +41,7 @@ export default function ProductsPage() {
   const [allKudos, setKudos] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
   const [openFilter, setOpenFilter] = useState(false);
+  const [kudosMessage, setKudosMessage] = useState('');
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -63,6 +64,41 @@ export default function ProductsPage() {
     setOpen(false);
   };
 
+  const handleKudosMessageChange = (event) => {
+    setKudosMessage(event.target.value);
+  };
+
+  const handleSubmitKudos = () => {
+    // Check if a member is selected and a kudos message is entered
+    if (!selectedMember || kudosMessage.trim() === '') {
+      return;
+    }
+
+    // Prepare the data to be sent to the backend
+    const newKudos = {
+      from_id: 1, 
+      to_id: selectedMember.member_id,
+      message: kudosMessage.trim(),
+    };
+
+    // Call the backend API to save the kudos
+    axios
+      .post('http://127.0.0.1:5000/kudos', newKudos)
+      .then((response) => {
+        // Handle successful response if needed
+        console.log('Kudos submitted successfully!');
+        // Close the dialog after submission
+        // handleClose(); 
+        
+        // Fetch Kudos after submitting Kudos
+        getKudosFromBackend();
+        // Clear the text field
+        setKudosMessage('');
+      })
+      .catch((error) => {
+        console.error('Error submitting kudos:', error);
+      });
+  };
   const getMembersFromBackend = () => {
     axios
       .get('http://127.0.0.1:5000/members')
@@ -166,10 +202,10 @@ export default function ProductsPage() {
                 paddingTop: '10px',
               }}
               fullWidth
+              value={kudosMessage} // Use the kudosMessage state as the value
+              onChange={handleKudosMessageChange} // Call the onChange handler
             />
-            {selectedMember && (
-              <KudosList kudos={allKudos.filter((kudo) => kudo.to_id === selectedMember.member_id)} />
-            )}
+            {selectedMember && <KudosList kudos={allKudos.filter((kudo) => kudo.to_id === selectedMember.member_id)} />}
           </DialogContent>
           <DialogActions>
             <Button
@@ -198,7 +234,7 @@ export default function ProductsPage() {
                   backgroundColor: '#ffffff',
                 },
               }}
-              onClick={handleClose}
+              onClick={handleSubmitKudos}
             >
               Submit
             </Button>
