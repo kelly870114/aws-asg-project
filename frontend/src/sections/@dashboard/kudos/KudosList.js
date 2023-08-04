@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import { IconButton, TextField } from '@mui/material';
 import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
 import axios from 'axios';
-import avatar from '../../../assets/images/avatars/avatar_10.jpg';
+import avatar from '../../../assets/images/avatars/avatar_1.jpg';
 
 export default function KudosList({ kudos }) {
   const [editingKudosId, setEditingKudosId] = React.useState(null);
@@ -79,7 +79,7 @@ export default function KudosList({ kudos }) {
         <React.Fragment key={kudo.kudos_id}>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
-              <Avatar src={avatar} />
+              <Avatar src="https://project-avatar-bucket.s3.us-west-1.amazonaws.com/avatar_1.jpg" />
             </ListItemAvatar>
             {editingKudosId === kudo.kudos_id ? (
               <TextField

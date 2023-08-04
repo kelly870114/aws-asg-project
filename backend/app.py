@@ -38,6 +38,8 @@ def members():
                 'member_id': row[0],
                 'member_name': row[1],
                 'job_title': row[2],
+                'working_department': row[3],
+                'member_avatar': row[4],
                 # Add other columns here if available in the 'members' table
             }
             employees.append(employee)
@@ -94,7 +96,7 @@ def kudos():
 
             sql_cmd = '''
                 SELECT k.kudos_id, k.from_id, k.to_id, k.message, 
-                       m.member_id, m.member_name, m.job_title
+                       m.member_id, m.member_name, m.job_title, m.member_avatar
                 FROM `aws-project`.kudos AS k
                 INNER JOIN `aws-project`.members AS m ON m.member_id = k.to_id;
             '''
@@ -111,6 +113,7 @@ def kudos():
                     'member_id': row[4],
                     'member_name': row[5],
                     'job_title': row[6],
+                    'member_avatar': row[7],
                     'sender_name': None,  # Initialize the sender_name to None
                     # Add other columns here if available in the 'members' table
                 }

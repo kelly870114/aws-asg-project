@@ -156,7 +156,7 @@ export default function ProductsPage() {
               <Card>
                 <Box sx={{ pt: '100%', position: 'relative' }}>
                   {/* Assuming the 'avatar' field is available in your employee data */}
-                  <StyledProductImg src={avatar} />
+                  <StyledProductImg src={member.member_avatar} />
                 </Box>
                 <Stack spacing={2} sx={{ p: 3 }} alignItems="center">
                   <Link color="inherit" underline="hover">
