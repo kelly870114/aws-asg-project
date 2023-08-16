@@ -9,17 +9,14 @@ import Typography from '@mui/material/Typography';
 import { IconButton, TextField } from '@mui/material';
 import { Edit, Delete, Save, Cancel } from '@mui/icons-material';
 import axios from 'axios';
-import avatar from '../../../assets/images/avatars/avatar_1.jpg';
 
 export default function KudosList({ kudos }) {
   const [editingKudosId, setEditingKudosId] = React.useState(null);
   const [editedMessage, setEditedMessage] = React.useState('');
+  const [allKudos, setKudos] = React.useState([]);
 
   const handleEditKudos = (kudosId) => {
-    // Start editing the kudos with the given kudosId
     setEditingKudosId(kudosId);
-
-    // Set the initial value of the edited message to the current kudos message
     const kudosToEdit = kudos.find((kudo) => kudo.kudos_id === kudosId);
     setEditedMessage(kudosToEdit.message);
   };
@@ -45,6 +42,8 @@ export default function KudosList({ kudos }) {
         const updatedKudosList = kudos.map((kudo) =>
           kudo.kudos_id === editingKudosId ? { ...kudo, message: editedMessage.trim() } : kudo
         );
+        // Update the allKudos state with the updated kudos list
+        setKudos(updatedKudosList);
         setEditingKudosId(null);
         setEditedMessage('');
       })
@@ -54,24 +53,35 @@ export default function KudosList({ kudos }) {
   };
 
   const handleCancelEditKudos = () => {
-    // Cancel the edit and revert to the original message
     setEditingKudosId(null);
     setEditedMessage('');
   };
 
   const handleDeleteKudos = (kudosId) => {
-    // Add your logic here to handle the delete action for the kudos with the given kudosId
     axios
       .delete(`http://127.0.0.1:5000/kudos/${kudosId}`)
       .then((response) => {
         console.log(`Kudos with ID ${kudosId} deleted successfully.`);
-        // Fetch the updated kudos list after successful deletion
-        // onUpdateKudos();
       })
       .catch((error) => {
         console.error('Error deleting kudos:', error);
       });
   };
+
+  const getKudosFromBackend = () => {
+    axios
+      .get('http://127.0.0.1:5000/kudos')
+      .then((response) => {
+        setKudos(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching kudos data:', error);
+      });
+  };
+
+  React.useEffect(() => {
+    getKudosFromBackend();
+  }, []);
 
   return (
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
@@ -91,7 +101,7 @@ export default function KudosList({ kudos }) {
               />
             ) : (
               <ListItemText
-                primary={kudo.sender_name} // Display the member_name of the sender or receiver, depending on your use case
+                primary={kudo.sender_name}
                 secondary={
                   <Typography sx={{ display: 'inline' }} component="span" variant="body2" color="text.primary">
                     {kudo.message}
