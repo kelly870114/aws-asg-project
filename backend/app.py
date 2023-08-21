@@ -1,21 +1,25 @@
 from flask import Flask, jsonify, request
-# from flask_sqlalchemy import SQLAlchemy
 from flaskext.mysql import MySQL
 from flask_cors import CORS
-# db = SQLAlchemy()
 
 app = Flask(__name__)
-mysql = MySQL()
+mysql_read = MySQL()
+mysql_write = MySQL()
 CORS(app)
 
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://admin:x.fV5+nGQ(Z&nzO+tx9Dhy.04VGR@project-db-server.ca9eyo6nclrw.us-west-1.rds.amazonaws.com:3306/aws-project"
- 
 app.config['MYSQL_DATABASE_USER'] = 'admin'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'pvC+Jno3):nHY13Iv_lWg+X}!(WA'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'project-aurora'
 app.config['MYSQL_DATABASE_DB'] = 'aws-project'
-app.config['MYSQL_DATABASE_HOST'] = 'project-db-server.ca9eyo6nclrw.us-west-1.rds.amazonaws.com'
-mysql.init_app(app)
+app.config['MYSQL_DATABASE_HOST'] = 'project-aurora-us-west-1b.ca9eyo6nclrw.us-west-1.rds.amazonaws.com'
+
+mysql_read.init_app(app)
+
+app.config['MYSQL_DATABASE_USER'] = 'admin'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'project-aurora'
+app.config['MYSQL_DATABASE_DB'] = 'aws-project'
+app.config['MYSQL_DATABASE_HOST'] = 'project-aurora.ca9eyo6nclrw.us-west-1.rds.amazonaws.com'
+
+mysql_write.init_app(app)
 
 @app.route("/")
 def home():
@@ -25,7 +29,7 @@ def home():
 @app.route("/members")
 def members():
     try:
-        conn = mysql.connect()
+        conn = mysql_read.connect()
         cursor = conn.cursor()
 
         sql_cmd = 'SELECT * FROM members;'  # Select all columns from the 'members' table
@@ -70,7 +74,7 @@ def kudos():
             # Add other fields as needed from the data
 
             # Establish database connection here
-            conn = mysql.connect()
+            conn = mysql_write.connect()
             cursor = conn.cursor()
 
             # Here, you can save the kudos data to the database using the provided fields
@@ -91,7 +95,7 @@ def kudos():
     elif request.method == "GET":
         try:
             # Establish database connection here
-            conn = mysql.connect()
+            conn = mysql_read.connect()
             cursor = conn.cursor()
 
             sql_cmd = '''
@@ -151,7 +155,7 @@ def update_kudos(kudos_id):
         message = data.get("message")
 
         # Add other fields as needed from the data
-        conn = mysql.connect()
+        conn = mysql_write.connect()
         # Here, you can update the kudos data in the database using the provided fields
         cursor = conn.cursor()
         update_query = "UPDATE kudos SET to_id = %s, message = %s WHERE kudos_id = %s"
@@ -169,7 +173,7 @@ def delete_kudos(kudos_id):
     # Initialize conn outside the try block
     conn = None
     try:
-        conn = mysql.connect()
+        conn = mysql_write.connect()
         cursor = conn.cursor()
         delete_query = "DELETE FROM kudos WHERE kudos_id = %s"
         cursor.execute(delete_query, (kudos_id,))
