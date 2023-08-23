@@ -56,8 +56,8 @@ def members():
         cursor.close()
         conn.close()
 
-if __name__ == "__main__":
-    app.run()
+# if __name__ == "__main__":
+#     app.run(host='0.0.0.0', port=5000)
 
 @app.route("/kudos", methods=["GET", "POST"])
 def kudos():
@@ -186,4 +186,4 @@ def delete_kudos(kudos_id):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=5000)
