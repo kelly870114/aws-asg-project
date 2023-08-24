@@ -43,6 +43,11 @@ export default function ProductsPage() {
   const [openFilter, setOpenFilter] = useState(false);
   const [kudosMessage, setKudosMessage] = useState('');
 
+  // Set Axios Host
+  const host = window.location.hostname;
+  const PORT = 5000;
+  axios.defaults.baseURL = `http://${host}:${PORT}`;
+  
   const handleOpenFilter = () => {
     setOpenFilter(true);
   };
@@ -83,7 +88,7 @@ export default function ProductsPage() {
 
     // Call the backend API to save the kudos
     axios
-      .post('http://127.0.0.1:5000/kudos', newKudos)
+      .post(`/kudos`, newKudos)
       .then((response) => {
         // Handle successful response if needed
         console.log('Kudos submitted successfully!');
@@ -99,9 +104,10 @@ export default function ProductsPage() {
         console.error('Error submitting kudos:', error);
       });
   };
+  
   const getMembersFromBackend = () => {
     axios
-      .get('http://127.0.0.1:5000/members')
+      .get(`/members`)
       .then((response) => {
         setMembers(response.data);
       })
@@ -112,7 +118,7 @@ export default function ProductsPage() {
 
   const getKudosFromBackend = () => {
     axios
-      .get('http://127.0.0.1:5000/kudos')
+      .get(`/kudos`)
       .then((response) => {
         setKudos(response.data);
       })
