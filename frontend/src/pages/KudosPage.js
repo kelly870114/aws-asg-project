@@ -129,15 +129,15 @@ export default function ProductsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Products | Minimal UI </title>
+        <title> Dashboard: Comments | Ginny Project </title>
       </Helmet>
 
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Kudos
+          Comment
         </Typography>
 
-        {/* filter, sort, sidebar for filter */}
+        {/* filter, sort, sidebar for filter
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
           <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
             <ProductFilterSidebar
@@ -147,7 +147,7 @@ export default function ProductsPage() {
             />
             <ProductSort />
           </Stack>
-        </Stack>
+        </Stack> */}
 
         <Grid container spacing={3}>
           {/* Member Cards */}
@@ -181,7 +181,7 @@ export default function ProductsPage() {
                     }}
                     onClick={handleClickOpen('paper', member)}
                   >
-                    Give Kudos
+                    Give Comment
                   </Button>
                 </Stack>
               </Card>
@@ -191,9 +191,9 @@ export default function ProductsPage() {
 
         {/* Kudos Dialog */}
         <Dialog open={open} onClose={handleClose} scroll={scroll}>
-          <DialogTitle>Give Kudos</DialogTitle>
+          <DialogTitle>Give Comment</DialogTitle>
           <DialogContent>
-            <DialogContentText>Give your colleague some kudos 🫶</DialogContentText>
+            <DialogContentText>Give your colleague some comments 🫶</DialogContentText>
             <TextField
               id="kudos"
               multiline

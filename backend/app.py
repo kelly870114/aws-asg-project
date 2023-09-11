@@ -5,8 +5,18 @@ from flask_cors import CORS
 app = Flask(__name__)
 mysql_read = MySQL()
 mysql_write = MySQL()
+# mysql = MySQL()
 CORS(app)
 
+# RDS MySQL
+# app.config['MYSQL_DATABASE_USER'] = 'admin'
+# app.config['MYSQL_DATABASE_PASSWORD'] = 'project-mysql'
+# app.config['MYSQL_DATABASE_DB'] = 'aws-project'
+# app.config['MYSQL_DATABASE_HOST'] = 'project-mysql-server.ca9eyo6nclrw.us-west-1.rds.amazonaws.com'
+
+# mysql.init_app(app)
+
+# Aurora MySQL
 app.config['MYSQL_DATABASE_USER'] = 'admin'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'project-aurora'
 app.config['MYSQL_DATABASE_DB'] = 'aws-project'
@@ -30,6 +40,7 @@ def home():
 def members():
     try:
         conn = mysql_read.connect()
+        # conn = mysql.connect()
         cursor = conn.cursor()
 
         sql_cmd = 'SELECT * FROM members;'  # Select all columns from the 'members' table
@@ -75,6 +86,7 @@ def kudos():
 
             # Establish database connection here
             conn = mysql_write.connect()
+            # conn = mysql.connect()
             cursor = conn.cursor()
 
             # Here, you can save the kudos data to the database using the provided fields
@@ -96,6 +108,7 @@ def kudos():
         try:
             # Establish database connection here
             conn = mysql_read.connect()
+            # conn = mysql.connect()
             cursor = conn.cursor()
 
             sql_cmd = '''
@@ -155,6 +168,7 @@ def update_kudos(kudos_id):
         message = data.get("message")
 
         # Add other fields as needed from the data
+        # conn = mysql.connect()
         conn = mysql_write.connect()
         # Here, you can update the kudos data in the database using the provided fields
         cursor = conn.cursor()
@@ -174,6 +188,7 @@ def delete_kudos(kudos_id):
     conn = None
     try:
         conn = mysql_write.connect()
+        # conn = mysql.connect()
         cursor = conn.cursor()
         delete_query = "DELETE FROM kudos WHERE kudos_id = %s"
         cursor.execute(delete_query, (kudos_id,))
@@ -186,4 +201,4 @@ def delete_kudos(kudos_id):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run()

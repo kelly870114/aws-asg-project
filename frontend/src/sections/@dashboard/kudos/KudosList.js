@@ -36,7 +36,7 @@ export default function KudosList({ kudos }) {
     };
 
     axios
-      .put(`http://127.0.0.1:5000/kudos/${editingKudosId}`, updatedKudos)
+      .put(`kudos/${editingKudosId}`, updatedKudos)
       .then((response) => {
         // Update the kudos list with the updated kudos after successful save
         const updatedKudosList = kudos.map((kudo) =>
@@ -59,7 +59,7 @@ export default function KudosList({ kudos }) {
 
   const handleDeleteKudos = (kudosId) => {
     axios
-      .delete(`http://127.0.0.1:5000/kudos/${kudosId}`)
+      .delete(`http://127.0.0.1:5000/comment/${kudosId}`)
       .then((response) => {
         console.log(`Kudos with ID ${kudosId} deleted successfully.`);
       })
@@ -69,7 +69,7 @@ export default function KudosList({ kudos }) {
   };
   const getKudosFromBackend = () => {
     axios
-      .get('http://127.0.0.1:5000/kudos')
+      .get('http://127.0.0.1:5000/comment')
       .then((response) => {
         setKudos(response.data);
       })
