@@ -40,7 +40,7 @@ export default function KudosList({ kudos }) {
     };
 
     axios
-      .put(`kudos/${editingKudosId}`, updatedKudos)
+      .put(`/kudos/${editingKudosId}`, updatedKudos)
       .then((response) => {
         // Update the kudos list with the updated kudos after successful save
         const updatedKudosList = kudos.map((kudo) =>
