@@ -46,7 +46,7 @@ export default function ProductsPage() {
   // Set Axios Host
   const host = window.location.hostname;
   const PORT = 5000;
-  axios.defaults.baseURL = `http://${host}:${PORT}`;
+  axios.defaults.baseURL = `http://127.0.0.1:${PORT}`;
   
   const handleOpenFilter = () => {
     setOpenFilter(true);
